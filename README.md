@@ -24,3 +24,4 @@ vagrant up --provision --provider virtualbox
 ```
 vagrant ssh
 ```
+open [http://192.168.33.10](http://192.168.33.10) in your browser
