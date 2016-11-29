@@ -64,11 +64,11 @@ redis_go() {
 	useradd redis
 
 	if [ ! -f "/etc/redis/6379.conf" ]; then
-		cp -u /var/www/redis.conf /etc/redis/6379.conf
+		cp -u /var/www/html/redis.conf /etc/redis/6379.conf
 	fi
 
 	if [ ! -f "/etc/init.d/redis_6379" ]; then
-		cp -u /var/www/redis.init.d /etc/init.d/redis_6379
+		cp -u /var/www/html/redis.init.d /etc/init.d/redis_6379
 	fi
 
 	update-rc.d redis_6379 defaults
@@ -141,7 +141,7 @@ apache_go() {
 EOF
 	fi
 
-	a2dissite 000-default
+	#a2dissite 000-default
 	a2ensite vagrant_vhost
 
 	a2enmod rewrite
