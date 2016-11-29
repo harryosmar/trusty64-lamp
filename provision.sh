@@ -17,7 +17,7 @@ main() {
 	git_go
 	redis_go
 	autoremove_go
-	node_npm_go
+	#node_npm_go
 }
 
 node_npm_go() {
@@ -48,14 +48,28 @@ redis_go() {
 	cd redis-stable
 	make
 	make install
-	rm /etc/redis.conf
-	mkdir -p /etc/redis
-	mkdir /var/redis
+	if [[ -e "/etc/redis.conf" ]]; then
+		rm /etc/redis.conf
+	fi
+
+	if [[ ! -e "/etc/redis" ]]; then
+  		mkdir -p /etc/redis
+	fi
+
+	if [[ ! -e "/var/redis" ]]; then
+		mkdir /var/redis
+	fi
+
 	chmod -R 777 /var/redis
 	useradd redis
 
-	cp -u /var/www/redis.conf /etc/redis/6379.conf
-	cp -u /var/www/redis.init.d /etc/init.d/redis_6379
+	if [ ! -f "/etc/redis/6379.conf" ]; then
+		cp -u /var/www/redis.conf /etc/redis/6379.conf
+	fi
+
+	if [ ! -f "/etc/init.d/redis_6379" ]; then
+		cp -u /var/www/redis.init.d /etc/init.d/redis_6379
+	fi
 
 	update-rc.d redis_6379 defaults
 
