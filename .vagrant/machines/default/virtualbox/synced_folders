@@ -1,0 +1,1 @@
+{"virtualbox":{"/var/www":{"owner":"www-data","group":"www-data","guestpath":"/var/www","hostpath":"/Users/harry/Vagrant/trusty64","disabled":false,"__vagrantfile":true}}}
