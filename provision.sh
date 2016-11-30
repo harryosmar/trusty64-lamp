@@ -37,7 +37,9 @@ git_go() {
 redis_go() {
 	apt-get -y install make
 
-	mkdir /opt/redis
+    if [[ ! -e "/opt/redis" ]]; then
+	    mkdir /opt/redis
+    fi
 
 	cd /opt/redis
 	# Use latest stable
@@ -47,6 +49,7 @@ redis_go() {
 
 	cd redis-stable
 	make
+	make test
 	make install
 	if [[ -e "/etc/redis.conf" ]]; then
 		rm /etc/redis.conf
@@ -82,6 +85,7 @@ update_go() {
     sudo add-apt-repository ppa:ondrej/php
 
 	# Update the server
+	sudo apt-get install python-software-properties
 	sudo apt-get update
     sudo apt-get upgrade
 }
@@ -144,7 +148,7 @@ apache_go() {
 EOF
 	fi
 
-	#a2dissite 000-default
+	a2ensite 000-default
 	a2ensite vagrant_vhost
 
 	a2enmod rewrite
@@ -154,8 +158,13 @@ EOF
 }
 
 php_go() {
+    # setup locale
+    sudo locale
+    sudo locale-gen "en_US.UTF-8"
+    sudo dpkg-reconfigure locales
+
 	# apt-get -y --force-yes install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php-pear
-	apt-get -y install php5.6 php5.6-mcrypt php5.6-mbstring php5.6-curl php5.6-cli php5.6-mysql php5.6-gd php5.6-intl php5.6-xsl php5.6-zip php5.6-sqlite php5.6-xdebug php-pear
+	apt-get -y install php5.6 php5.6-mcrypt php5.6-mbstring php5.6-curl php5.6-cli php5.6-mysql php5.6-gd php5.6-intl php5.6-xsl php5.6-zip php5.6-sqlite php5.6-xdebug php-pear libapache2-mod-php5.6
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}

@@ -4,7 +4,7 @@ Build vagrant development using box trusty64, contained LAMP and redis server
 ## Server Info
 + Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-101-generic x86_64)
 + Apache/2.4.7
-+ PHP 5.5.9 with xdebug & OPcache
++ PHP 5.6 with xdebug & OPcache
 + MySQL
   - port : 3306
   - user : root
