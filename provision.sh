@@ -79,9 +79,7 @@ redis_go() {
 
 update_go() {
     # Add PHP 5.6 package sources
-    sudo apt-get install software-properties-common
-    sudo add-apt-repository ppa:ondrej/php5-5.6
-
+    sudo add-apt-repository ppa:ondrej/php
 
 	# Update the server
 	sudo apt-get update
@@ -156,7 +154,8 @@ EOF
 }
 
 php_go() {
-	apt-get -y install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php-pear
+	# apt-get -y --force-yes install php5 php5-curl php5-mysql php5-sqlite php5-xdebug php-pear
+	apt-get -y install php5.6 php5.6-mcrypt php5.6-mbstring php5.6-curl php5.6-cli php5.6-mysql php5.6-gd php5.6-intl php5.6-xsl php5.6-zip php5.6-sqlite php5.6-xdebug php-pear
 
 	sed -i "s/display_startup_errors = Off/display_startup_errors = On/g" ${php_config_file}
 	sed -i "s/display_errors = Off/display_errors = On/g" ${php_config_file}
