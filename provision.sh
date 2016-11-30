@@ -78,9 +78,14 @@ redis_go() {
 }
 
 update_go() {
+    # Add PHP 5.6 package sources
+    sudo apt-get install software-properties-common
+    sudo add-apt-repository ppa:ondrej/php5-5.6
+
+
 	# Update the server
-	apt-get update
-	# apt-get -y upgrade
+	sudo apt-get update
+    sudo apt-get upgrade
 }
 
 autoremove_go() {
