@@ -1,23 +1,51 @@
 #!/bin/bash
 
 apache_config_file="/etc/apache2/envvars"
-apache_vhost_file="/etc/apache2/sites-available/vagrant_vhost.conf"
+apache_vhost_front="/etc/apache2/sites-available/kurir.conf"
+apache_vhost_api="/etc/apache2/sites-available/api.kurir.conf"
 php_config_file="/etc/php5/apache2/php.ini"
 xdebug_config_file="/etc/php5/mods-available/xdebug.ini"
 mysql_config_file="/etc/mysql/my.cnf"
+WORKSPACE_FRONT="var/www/html/web/kurir"
+WORKSPACE_API="var/www/html/web/api.kurir"
 
 # This function is called at the very bottom of the file
 main() {
 	update_go
 	network_go
 	tools_go
+	git_go
+	prepare_project_go
 	apache_go
+	start_project_go
 	mysql_go
 	php_go
-	git_go
 	redis_go
 	autoremove_go
 	#node_npm_go
+}
+
+prepare_project_go()
+{
+    if [[ ! -e "/var/www/web" ]]; then
+        mkdir /var/www/web && cd /var/www/web
+    fi
+
+    // setup front
+    git clone https://github.com/harryosmar/kurir.git
+    cd /var/www/web/kurir
+    cp -u .env.example .env
+    sed -i "s/localhost:8000/kurir.dev/g" /var/www/web/kurir/.env
+    sed -i "s/localhost:8001/api.kurir.dev/g" /var/www/web/kurir/.env
+
+    // setup api
+    cd /var/www/web/ && git clone https://github.com/harryosmar/api.kurir.git && cd /var/www/web/api.kurir
+    cp -u .env.example .env
+}
+
+start_project_go {
+    cd /var/www/web/kurir && composer install --no-dev
+    cd /var/www/web/api.kurir && composer install --no-dev
 }
 
 node_npm_go() {
@@ -112,44 +140,12 @@ apache_go() {
 	#sed -i "s/^\(.*\)www-data/\1vagrant/g" ${apache_config_file}
 	chown -R vagrant:vagrant /var/log/apache2
 
-	if [ ! -f "${apache_vhost_file}" ]; then
-		cat << EOF > ${apache_vhost_file}
-<VirtualHost *:80>
-        ServerAdmin webmaster@localhost
-        ServerName sulleyweb.test
-        DocumentRoot /var/www/sulleyweb/public
+	#if [ ! -f "${apache_vhost_front}" ]; then
+	#fi
 
-        <Directory />
-                Options FollowSymLinks
-                AllowOverride None
-        </Directory>
+	cp -u /var/www/html/vhost/kurir.conf $apache_vhost_front && cp -u /var/www/html/vhost/api.kurir.conf $apache_vhost_api
 
-        <Directory /var/www/sulleyweb>
-                Options FollowSymLinks
-                AllowOverride All
-                Order allow,deny
-                allow from all
-        </Directory>
-
-
-        ErrorLog /var/log/apache2/sulleyweb.error.log
-
-        # Possible values include: debug, info, notice, warn, error, crit, alert, emerg.
-        LogLevel warn
-
-        SetEnvIfNoCase ^X-HTTPS$ .+ HTTP_X-HTTPS
-        CustomLog /var/log/apache2/sulleyweb.access.log combined env=!HTTP_X-HTTPS
-        CustomLog /var/log/apache2/ssl.sulleyweb.access.log combined env=HTTP_X-HTTPS
-
-        ServerSignature Off
-        AllowEncodedSlashes On
-
-</VirtualHost>
-EOF
-	fi
-
-	a2ensite 000-default
-	a2ensite vagrant_vhost
+	a2ensite 000-default && a2ensite kurir.conf && a2ensite api.kurir.conf
 
 	a2enmod rewrite
 
