@@ -17,35 +17,50 @@ main() {
 	git_go
 	prepare_project_go
 	apache_go
-	start_project_go
-	mysql_go
 	php_go
+	mysql_go
 	redis_go
+	start_project_go
 	autoremove_go
 	#node_npm_go
 }
 
 prepare_project_go()
 {
-    if [[ ! -e "/var/www/web" ]]; then
-        mkdir /var/www/web && cd /var/www/web
+    if [[ ! -e "/var/www/html/web" ]]; then
+        mkdir /var/www/html/web
     fi
 
     // setup front
-    git clone https://github.com/harryosmar/kurir.git
-    cd /var/www/web/kurir
+    if [[ ! -e "/var/www/html/web/kurir" ]]; then
+        git clone https://github.com/harryosmar/kurir.git
+        cd /var/www/html/web/kurir
+    else
+        cd /var/www/html/web/kurir
+        git pull origin master
+    fi
+
     cp -u .env.example .env
-    sed -i "s/localhost:8000/kurir.dev/g" /var/www/web/kurir/.env
-    sed -i "s/localhost:8001/api.kurir.dev/g" /var/www/web/kurir/.env
+    sed -i "s/localhost:8000/kurir.dev/g" /var/www/html/web/kurir/.env
+    sed -i "s/localhost:8001/api.kurir.dev/g" /var/www/html/web/kurir/.env
 
     // setup api
-    cd /var/www/web/ && git clone https://github.com/harryosmar/api.kurir.git && cd /var/www/web/api.kurir
+    if [[ ! -e "/var/www/html/web/api.kurir" ]]; then
+        git clone https://github.com/harryosmar/api.kurir.git
+        cd /var/www/html/web/api.kurir
+    else
+        cd /var/www/html/web/api.kurir
+        git pull origin master
+    fi
     cp -u .env.example .env
+    sed -i "s/secret/root/g" /var/www/html/web/api.kurir/.env
 }
 
-start_project_go {
-    cd /var/www/web/kurir && composer install --no-dev
-    cd /var/www/web/api.kurir && composer install --no-dev
+start_project_go() {
+    cd /var/www/html/web/kurir && composer install --no-dev
+    cd /var/www/html/web/api.kurir && composer install --no-dev
+    echo "CREATE DATABASE IF NOT EXISTS kurir" | mysql -u root --password=root
+    cd /var/www/html/web/api.kurir && php artisan migrate:refresh --seed
 }
 
 node_npm_go() {
@@ -143,10 +158,11 @@ apache_go() {
 	#if [ ! -f "${apache_vhost_front}" ]; then
 	#fi
 
-	cp -u /var/www/html/vhost/kurir.conf $apache_vhost_front && cp -u /var/www/html/vhost/api.kurir.conf $apache_vhost_api
+	cp -u /var/www/html/vhost/kurir.conf $apache_vhost_front
+	cp -u /var/www/html/vhost/api.kurir.conf $apache_vhost_api
 
-	a2ensite 000-default && a2ensite kurir.conf && a2ensite api.kurir.conf
-
+	a2ensite && a2ensite kurir.conf && a2ensite api.kurir.conf
+    a2dismod 000-default
 	a2enmod rewrite
 
 	service apache2 reload
