@@ -1,6 +1,10 @@
 # trusty64-lamp
 Build vagrant development using box trusty64, contained LAMP and redis server
 
+# Requirement
++ Virtualbox
++ Vagrant
+
 ## Server Info
 + Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-101-generic x86_64)
 + Apache/2.4.7
@@ -20,8 +24,12 @@ cd trusty64-lamp
 vagrant up --provision --provider virtualbox
 ```
 
-## Now it's time to start Working
+## Configure host
+open your local file `/etc/host`, then add this line
 ```
-vagrant ssh
+192.168.33.106 kurir.dev api.kurir.dev
 ```
-open [http://192.168.33.10](http://192.168.33.10) in your browser
+
+## It's Done
+open [http://kurir.dev](http://kurir.dev) in your browser
+open [http://api.kurir.dev](http://api.kurir.dev) in your browser
