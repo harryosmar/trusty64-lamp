@@ -2,8 +2,8 @@
 Build vagrant development using box trusty64, contained LAMP and redis server
 
 # Requirement
-+ Virtualbox
-+ Vagrant
++ Virtualbox <https://www.virtualbox.org/>
++ Vagrant <https://www.vagrantup.com/>
 
 ## Server Info
 + Ubuntu 14.04.5 LTS (GNU/Linux 3.13.0-101-generic x86_64)
