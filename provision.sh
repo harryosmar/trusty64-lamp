@@ -33,8 +33,8 @@ prepare_project_go()
 
     // setup front
     if [[ ! -e "/var/www/html/web/kurir" ]]; then
-        git clone https://github.com/harryosmar/kurir.git
-        cd /var/www/html/web/kurir
+        cd /var/www/html/web && git clone https://github.com/harryosmar/kurir.git
+        cd kurir
     else
         cd /var/www/html/web/kurir
         git pull origin master
@@ -46,8 +46,8 @@ prepare_project_go()
 
     // setup api
     if [[ ! -e "/var/www/html/web/api.kurir" ]]; then
-        git clone https://github.com/harryosmar/api.kurir.git
-        cd /var/www/html/web/api.kurir
+        cd /var/www/html/web && git clone https://github.com/harryosmar/api.kurir.git
+        cd api.kurir
     else
         cd /var/www/html/web/api.kurir
         git pull origin master
