@@ -161,8 +161,8 @@ apache_go() {
 	cp -u /var/www/html/vhost/kurir.conf $apache_vhost_front
 	cp -u /var/www/html/vhost/api.kurir.conf $apache_vhost_api
 
-	a2ensite && a2ensite kurir.conf && a2ensite api.kurir.conf
-    a2dismod 000-default
+	a2ensite kurir.conf && a2ensite api.kurir.conf
+    a2dissite 000-default
 	a2enmod rewrite
 
 	service apache2 reload
