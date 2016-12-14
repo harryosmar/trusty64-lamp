@@ -204,6 +204,11 @@ EOF
 		chmod +x phpunit-old.phar
 		mv phpunit-old.phar /usr/local/bin/phpunit
 	fi
+
+	# switch to php5.6
+	a2dismod php5
+	a2enmod php5.6
+	service apache2 restart
 }
 
 mysql_go() {
